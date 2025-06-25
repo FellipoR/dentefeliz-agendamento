@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -181,7 +182,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-primary">🦷 Dente Feliz</h1>
+            <h1 className="text-2xl font-bold text-primary">🦷 OdontoAgenda</h1>
             <span className="text-muted-foreground">
               {user.type === 'admin' ? 'Painel Administrativo' : `Olá, ${user.name}`}
             </span>
@@ -352,31 +353,31 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
         <div className="mt-8">
           <Tabs defaultValue="dentist" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="dentist">Sobre o Dentista</TabsTrigger>
+              <TabsTrigger value="dentist">Sobre a Dentista</TabsTrigger>
               <TabsTrigger value="location">Localização</TabsTrigger>
             </TabsList>
             
             <TabsContent value="dentist" className="mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Sobre o Dentista</CardTitle>
+                  <CardTitle>Sobre a Dentista</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center space-y-4">
                     <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                      👨‍⚕️
+                      👩‍⚕️
                     </div>
                     <div>
-                      <h3 className="font-semibold text-xl">Dr. João Silva</h3>
-                      <p className="text-muted-foreground">CRO 12345-SP</p>
+                      <h3 className="font-semibold text-xl">Dra. Andrea Ribeiro</h3>
+                      <p className="text-muted-foreground">CRO 12345-RJ</p>
                     </div>
                     <div className="space-y-3">
                       <div>
                         <h4 className="font-medium mb-2">Formação Acadêmica</h4>
                         <ul className="text-sm text-muted-foreground space-y-1">
-                          <li>• Graduação em Odontologia - Universidade de São Paulo (USP)</li>
-                          <li>• Especialização em Implantodontia - APCD</li>
-                          <li>• Pós-graduação em Estética Dental</li>
+                          <li>• Graduação em Odontologia - Universidade Federal do Rio de Janeiro (UFRJ)</li>
+                          <li>• Especialização em Implantodontia - Universidade Estadual do Rio de Janeiro (UERJ)</li>
+                          <li>• Pós-graduação em Estética Dental - Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)</li>
                           <li>• 15 anos de experiência clínica</li>
                         </ul>
                       </div>
@@ -409,19 +410,18 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
-                        <h4 className="font-medium text-base mb-2">Clínica Dente Feliz</h4>
+                        <h4 className="font-medium text-base mb-2">Clínica OdontoAgenda</h4>
                         <p className="text-muted-foreground">
-                          Rua das Flores, 123<br/>
-                          Centro - São Paulo/SP<br/>
-                          CEP: 01234-567
+                          Padre Roser, 1153<br/>
+                          Sobrado Irajá - Rio de Janeiro/RJ<br/>
+                          CEP: 21235-140
                         </p>
                       </div>
                       <div>
                         <h4 className="font-medium text-base mb-2">Contato</h4>
                         <div className="text-muted-foreground space-y-1">
-                          <p>📞 Telefone: (11) 3333-4444</p>
-                          <p>📱 WhatsApp: (11) 99999-8888</p>
-                          <p>✉️ Email: contato@dentefeliz.com.br</p>
+                          <p>📱 WhatsApp: (21) 96424-6191</p>
+                          <p>✉️ Email: Andreaassuncao@yahoo.combr</p>
                         </div>
                       </div>
                       <div>
@@ -435,14 +435,14 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                       <div>
                         <h4 className="font-medium text-base mb-2">Como Chegar</h4>
                         <p className="text-muted-foreground text-sm">
-                          Localizada no centro da cidade, próximo ao metrô República. 
-                          Estacionamento disponível nas proximidades.
+                          Localizada no bairro Irajá, zona norte do Rio de Janeiro. 
+                          Próximo ao centro comercial da região.
                         </p>
                       </div>
                     </div>
                     <div className="h-80">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1075145432823!2d-46.63431688502208!3d-23.56168068468172!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sRepública%2C%20São%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3674.5234567890123!2d-43.3456789!3d-22.8123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997e0a0123456789%3A0x123456789abcdef0!2sPadre%20Roser%2C%20Iraj%C3%A1%20-%20Rio%20de%20Janeiro%20-%20RJ!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
                         width="100%"
                         height="100%"
                         style={{ border: 0 }}
