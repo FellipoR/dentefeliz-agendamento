@@ -8,8 +8,8 @@
 ## Quais tecnologias são usadas neste projeto?
 Este projeto é construído com:
 
-- Vite
+- Html
 - TypeScript
-- React
-- shadcn-ui
+- JavaScript
+- JavaScript Object Notation
 - CSS
