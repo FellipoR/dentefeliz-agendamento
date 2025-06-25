@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar } from '@/components/ui/calendar';
 import { format, addDays, isSameDay, isAfter, isBefore } from 'date-fns';
@@ -42,6 +44,12 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [userAppointments, setUserAppointments] = useState<Appointment[]>([]);
+  const [confirmationDialog, setConfirmationDialog] = useState<{
+    open: boolean;
+    date?: Date;
+    time?: string;
+  }>({ open: false });
+  const [limitDialog, setLimitDialog] = useState(false);
   const { toast } = useToast();
 
   const timeSlots = [
@@ -74,6 +82,15 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
     );
   };
 
+  const getUserAppointmentsForDate = (date: Date) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return appointments.filter(apt => 
+      apt.date === dateStr && 
+      apt.clientEmail === user.email && 
+      apt.status === 'scheduled'
+    );
+  };
+
   const isWeekday = (date: Date) => {
     const day = date.getDay();
     return day >= 1 && day <= 5; // Monday to Friday
@@ -85,16 +102,33 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
     return isBefore(date, today);
   };
 
-  const scheduleAppointment = (time: string) => {
+  const handleTimeSlotClick = (time: string) => {
     if (!selectedDate || !user.email) return;
 
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    // Verificar se já tem 3 consultas no mesmo dia
+    const appointmentsOnDate = getUserAppointmentsForDate(selectedDate);
+    if (appointmentsOnDate.length >= 3) {
+      setLimitDialog(true);
+      return;
+    }
+
+    setConfirmationDialog({
+      open: true,
+      date: selectedDate,
+      time: time
+    });
+  };
+
+  const confirmAppointment = () => {
+    if (!confirmationDialog.date || !confirmationDialog.time || !user.email) return;
+
+    const dateStr = format(confirmationDialog.date, 'yyyy-MM-dd');
     const newAppointment: Appointment = {
       id: Date.now().toString(),
       clientEmail: user.email,
       clientName: user.name || '',
       date: dateStr,
-      time,
+      time: confirmationDialog.time,
       status: 'scheduled'
     };
 
@@ -106,8 +140,10 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
     
     toast({
       title: "Consulta agendada!",
-      description: `Agendado para ${format(selectedDate, 'dd/MM/yyyy', { locale: ptBR })} às ${time}h`
+      description: `Agendado para ${format(confirmationDialog.date, 'dd/MM/yyyy', { locale: ptBR })} às ${confirmationDialog.time}h`
     });
+
+    setConfirmationDialog({ open: false });
   };
 
   const cancelAppointment = (appointmentId: string) => {
@@ -184,7 +220,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                             key={time}
                             variant={isTimeSlotAvailable(selectedDate, time) ? "outline" : "secondary"}
                             disabled={!isTimeSlotAvailable(selectedDate, time)}
-                            onClick={() => scheduleAppointment(time)}
+                            onClick={() => handleTimeSlotClick(time)}
                             className="h-10"
                           >
                             {time}h
@@ -396,6 +432,51 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
           </Tabs>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmationDialog.open} onOpenChange={(open) => setConfirmationDialog({ ...confirmationDialog, open })}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmar Agendamento</DialogTitle>
+            <DialogDescription>
+              Você deseja agendar uma consulta para:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <p className="text-lg font-medium">
+              {confirmationDialog.date && format(confirmationDialog.date, 'dd/MM/yyyy', { locale: ptBR })}
+            </p>
+            <p className="text-lg font-medium">
+              às {confirmationDialog.time}h
+            </p>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setConfirmationDialog({ open: false })}>
+              Cancelar
+            </Button>
+            <Button onClick={confirmAppointment}>
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Limit Alert Dialog */}
+      <AlertDialog open={limitDialog} onOpenChange={setLimitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limite de consultas atingido</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você já possui 3 consultas agendadas para este dia. É permitido agendar no máximo 3 consultas por dia.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setLimitDialog(false)}>
+              Entendi
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
