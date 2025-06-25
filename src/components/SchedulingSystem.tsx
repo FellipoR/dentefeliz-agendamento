@@ -369,7 +369,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                     </div>
                     <div>
                       <h3 className="font-semibold text-xl">Dra. Andrea Ribeiro</h3>
-                      <p className="text-muted-foreground">CRO 12345-RJ</p>
+                      <p className="text-muted-foreground">CRO 54941-RJ</p>
                     </div>
                     <div className="space-y-3">
                       <div>
@@ -442,7 +442,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                     </div>
                     <div className="h-80">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3674.5234567890123!2d-43.3456789!3d-22.8123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997e0a0123456789%3A0x123456789abcdef0!2sPadre%20Roser%2C%20Iraj%C3%A1%20-%20Rio%20de%20Janeiro%20-%20RJ!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3676.8765!2d-43.3376!3d-22.8127!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997e0da2b1234567%3A0x9876543210abcdef!2sPadre%20Roser%2C%201153%20-%20Iraj%C3%A1%2C%20Rio%20de%20Janeiro%20-%20RJ%2C%2021235-140!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
                         width="100%"
                         height="100%"
                         style={{ border: 0 }}
