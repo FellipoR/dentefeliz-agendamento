@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar } from '@/components/ui/calendar';
 import { format, addDays, isSameDay, isAfter, isBefore } from 'date-fns';
@@ -259,103 +260,140 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
           </Card>
         )}
 
-        {/* Dentist Info Section */}
-        <div className="mt-12 grid md:grid-cols-3 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sobre o Dentista</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center space-y-3">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  👨‍⚕️
-                </div>
-                <div>
-                  <h3 className="font-semibold">Dr. João Silva</h3>
-                  <p className="text-sm text-muted-foreground">CRO 12345-SP</p>
-                </div>
-                <div className="text-sm space-y-1">
-                  <p>• Graduação em Odontologia - USP</p>
-                  <p>• Especialização em Implantodontia</p>
-                  <p>• 15 anos de experiência</p>
-                </div>
-                <div className="flex justify-center gap-3">
-                  <Button variant="outline" size="sm">
-                    📘 Facebook
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    📷 Instagram
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Localização</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div>
-                  <h4 className="font-medium">Clínica Dente Feliz</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Rua das Flores, 123<br/>
-                    Centro - São Paulo/SP<br/>
-                    CEP: 01234-567
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Contato</h4>
-                  <p className="text-sm text-muted-foreground">
-                    📞 (11) 3333-4444<br/>
-                    📱 (11) 99999-8888<br/>
-                    ✉️ contato@dentefeliz.com.br
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Horário de Funcionamento</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Segunda a Sexta: 8h às 18h<br/>
-                    Sábado e Domingo: Fechado
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações Importantes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <h4 className="font-medium">Antes da Consulta</h4>
-                  <p className="text-muted-foreground">
-                    • Chegue 15 minutos antes<br/>
-                    • Traga documentos pessoais<br/>
-                    • Informe sobre medicamentos
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Cancelamentos</h4>
-                  <p className="text-muted-foreground">
-                    • Cancele com 24h de antecedência<br/>
-                    • Use o sistema ou ligue para a clínica
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Formas de Pagamento</h4>
-                  <p className="text-muted-foreground">
-                    • Dinheiro, cartão ou PIX<br/>
-                    • Parcelamento disponível<br/>
-                    • Convênios aceitos
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Information Section with Tabs */}
+        <div className="mt-12">
+          <Tabs defaultValue="info" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="info">Informações Importantes</TabsTrigger>
+              <TabsTrigger value="dentist">Sobre o Dentista</TabsTrigger>
+              <TabsTrigger value="location">Localização</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="info" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Informações Importantes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4 text-sm">
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Antes da Consulta</h4>
+                      <ul className="text-muted-foreground space-y-1">
+                        <li>• Chegue 15 minutos antes do horário agendado</li>
+                        <li>• Traga documentos pessoais (RG e CPF)</li>
+                        <li>• Informe sobre medicamentos que está tomando</li>
+                        <li>• Relate histórico de problemas dentários</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Cancelamentos</h4>
+                      <ul className="text-muted-foreground space-y-1">
+                        <li>• Cancele com pelo menos 24h de antecedência</li>
+                        <li>• Use o sistema online ou ligue para a clínica</li>
+                        <li>• Reagendamentos podem ser feitos pelo sistema</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Formas de Pagamento</h4>
+                      <ul className="text-muted-foreground space-y-1">
+                        <li>• Dinheiro, cartão de débito ou crédito</li>
+                        <li>• PIX aceito</li>
+                        <li>• Parcelamento disponível para tratamentos</li>
+                        <li>• Convênios odontológicos aceitos</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="dentist" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sobre o Dentista</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center space-y-4">
+                    <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                      👨‍⚕️
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-xl">Dr. João Silva</h3>
+                      <p className="text-muted-foreground">CRO 12345-SP</p>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <h4 className="font-medium mb-2">Formação Acadêmica</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          <li>• Graduação em Odontologia - Universidade de São Paulo (USP)</li>
+                          <li>• Especialização em Implantodontia - APCD</li>
+                          <li>• Pós-graduação em Estética Dental</li>
+                          <li>• 15 anos de experiência clínica</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-3">Redes Sociais</h4>
+                        <div className="flex justify-center gap-3">
+                          <Button variant="outline" size="sm">
+                            📘 Facebook
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            📷 Instagram
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            💼 LinkedIn
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="location" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Localização</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Clínica Dente Feliz</h4>
+                      <p className="text-muted-foreground">
+                        Rua das Flores, 123<br/>
+                        Centro - São Paulo/SP<br/>
+                        CEP: 01234-567
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Contato</h4>
+                      <div className="text-muted-foreground space-y-1">
+                        <p>📞 Telefone: (11) 3333-4444</p>
+                        <p>📱 WhatsApp: (11) 99999-8888</p>
+                        <p>✉️ Email: contato@dentefeliz.com.br</p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Horário de Funcionamento</h4>
+                      <div className="text-muted-foreground space-y-1">
+                        <p>Segunda a Sexta: 8h às 18h</p>
+                        <p>Sábado e Domingo: Fechado</p>
+                        <p>Feriados: Consulte disponibilidade</p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-base mb-2">Como Chegar</h4>
+                      <p className="text-muted-foreground text-sm">
+                        Localizada no centro da cidade, próximo ao metrô República. 
+                        Estacionamento disponível nas proximidades.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
