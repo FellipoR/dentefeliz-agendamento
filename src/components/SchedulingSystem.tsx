@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -73,13 +72,27 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
     }
   };
 
+  const getBrasiliaTime = () => {
+    const now = new Date();
+    // Converter para horário de Brasília (UTC-3)
+    const brasiliaTime = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+    return brasiliaTime;
+  };
+
   const isTimeSlotAvailable = (date: Date, time: string) => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    return !appointments.some(apt => 
+    const isSlotTaken = appointments.some(apt => 
       apt.date === dateStr && 
       apt.time === time && 
       apt.status === 'scheduled'
     );
+
+    // Verificar se o horário já passou (considerando fuso de Brasília)
+    const brasiliaTime = getBrasiliaTime();
+    const selectedDateTime = new Date(`${dateStr}T${time}:00`);
+    const isInPast = selectedDateTime < brasiliaTime;
+
+    return !isSlotTaken && !isInPast;
   };
 
   const getUserAppointmentsForDate = (date: Date) => {
@@ -97,9 +110,9 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
   };
 
   const isPastDate = (date: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return isBefore(date, today);
+    const brasiliaTime = getBrasiliaTime();
+    brasiliaTime.setHours(0, 0, 0, 0);
+    return isBefore(date, brasiliaTime);
   };
 
   const handleTimeSlotClick = (time: string) => {
@@ -296,52 +309,52 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
           </Card>
         )}
 
-        {/* Information Section with Tabs */}
+        {/* Information Section */}
         <div className="mt-12">
-          <Tabs defaultValue="info" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="info">Informações Importantes</TabsTrigger>
+          <Card>
+            <CardHeader>
+              <CardTitle>Informações Importantes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <h4 className="font-medium text-base mb-2">Antes da Consulta</h4>
+                  <ul className="text-muted-foreground space-y-1">
+                    <li>• Chegue 15 minutos antes do horário agendado</li>
+                    <li>• Traga documentos pessoais (RG e CPF)</li>
+                    <li>• Informe sobre medicamentos que está tomando</li>
+                    <li>• Relate histórico de problemas dentários</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-base mb-2">Cancelamentos</h4>
+                  <ul className="text-muted-foreground space-y-1">
+                    <li>• Cancele com pelo menos 24h de antecedência</li>
+                    <li>• Use o sistema online ou ligue para a clínica</li>
+                    <li>• Reagendamentos podem ser feitos pelo sistema</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-base mb-2">Formas de Pagamento</h4>
+                  <ul className="text-muted-foreground space-y-1">
+                    <li>• Dinheiro, cartão de débito ou crédito</li>
+                    <li>• PIX aceito</li>
+                    <li>• Parcelamento disponível para tratamentos</li>
+                    <li>• Convênios odontológicos aceitos</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tabs for Additional Information */}
+        <div className="mt-8">
+          <Tabs defaultValue="dentist" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="dentist">Sobre o Dentista</TabsTrigger>
               <TabsTrigger value="location">Localização</TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="info" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Informações Importantes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 text-sm">
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Antes da Consulta</h4>
-                      <ul className="text-muted-foreground space-y-1">
-                        <li>• Chegue 15 minutos antes do horário agendado</li>
-                        <li>• Traga documentos pessoais (RG e CPF)</li>
-                        <li>• Informe sobre medicamentos que está tomando</li>
-                        <li>• Relate histórico de problemas dentários</li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Cancelamentos</h4>
-                      <ul className="text-muted-foreground space-y-1">
-                        <li>• Cancele com pelo menos 24h de antecedência</li>
-                        <li>• Use o sistema online ou ligue para a clínica</li>
-                        <li>• Reagendamentos podem ser feitos pelo sistema</li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Formas de Pagamento</h4>
-                      <ul className="text-muted-foreground space-y-1">
-                        <li>• Dinheiro, cartão de débito ou crédito</li>
-                        <li>• PIX aceito</li>
-                        <li>• Parcelamento disponível para tratamentos</li>
-                        <li>• Convênios odontológicos aceitos</li>
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
             
             <TabsContent value="dentist" className="mt-6">
               <Card>
@@ -393,37 +406,51 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                   <CardTitle>Localização</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Clínica Dente Feliz</h4>
-                      <p className="text-muted-foreground">
-                        Rua das Flores, 123<br/>
-                        Centro - São Paulo/SP<br/>
-                        CEP: 01234-567
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Contato</h4>
-                      <div className="text-muted-foreground space-y-1">
-                        <p>📞 Telefone: (11) 3333-4444</p>
-                        <p>📱 WhatsApp: (11) 99999-8888</p>
-                        <p>✉️ Email: contato@dentefeliz.com.br</p>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-medium text-base mb-2">Clínica Dente Feliz</h4>
+                        <p className="text-muted-foreground">
+                          Rua das Flores, 123<br/>
+                          Centro - São Paulo/SP<br/>
+                          CEP: 01234-567
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-base mb-2">Contato</h4>
+                        <div className="text-muted-foreground space-y-1">
+                          <p>📞 Telefone: (11) 3333-4444</p>
+                          <p>📱 WhatsApp: (11) 99999-8888</p>
+                          <p>✉️ Email: contato@dentefeliz.com.br</p>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-base mb-2">Horário de Funcionamento</h4>
+                        <div className="text-muted-foreground space-y-1">
+                          <p>Segunda a Sexta: 8h às 18h</p>
+                          <p>Sábado e Domingo: Fechado</p>
+                          <p>Feriados: Consulte disponibilidade</p>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-base mb-2">Como Chegar</h4>
+                        <p className="text-muted-foreground text-sm">
+                          Localizada no centro da cidade, próximo ao metrô República. 
+                          Estacionamento disponível nas proximidades.
+                        </p>
                       </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Horário de Funcionamento</h4>
-                      <div className="text-muted-foreground space-y-1">
-                        <p>Segunda a Sexta: 8h às 18h</p>
-                        <p>Sábado e Domingo: Fechado</p>
-                        <p>Feriados: Consulte disponibilidade</p>
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-base mb-2">Como Chegar</h4>
-                      <p className="text-muted-foreground text-sm">
-                        Localizada no centro da cidade, próximo ao metrô República. 
-                        Estacionamento disponível nas proximidades.
-                      </p>
+                    <div className="h-80">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1075145432823!2d-46.63431688502208!3d-23.56168068468172!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sRepública%2C%20São%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="rounded-lg"
+                      />
                     </div>
                   </div>
                 </CardContent>
