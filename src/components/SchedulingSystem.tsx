@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,8 +89,25 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
 
     // Verificar se o horário já passou (considerando fuso de Brasília)
     const brasiliaTime = getBrasiliaTime();
-    const selectedDateTime = new Date(`${dateStr}T${time}:00`);
-    const isInPast = selectedDateTime < brasiliaTime;
+    
+    // Criar data/hora corretamente considerando o fuso de Brasília
+    const [hours, minutes] = time.split(':').map(Number);
+    const selectedDateTime = new Date(date);
+    selectedDateTime.setHours(hours, minutes, 0, 0);
+    
+    // Ajustar a data selecionada para o fuso de Brasília
+    const selectedDateTimeBrasilia = new Date(selectedDateTime.getTime() - (3 * 60 * 60 * 1000));
+    
+    console.log('Checking time slot:', {
+      date: dateStr,
+      time,
+      brasiliaTime: brasiliaTime.toISOString(),
+      selectedDateTimeBrasilia: selectedDateTimeBrasilia.toISOString(),
+      isInPast: selectedDateTimeBrasilia < brasiliaTime,
+      isSlotTaken
+    });
+
+    const isInPast = selectedDateTimeBrasilia < brasiliaTime;
 
     return !isSlotTaken && !isInPast;
   };
@@ -126,6 +142,16 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
       return;
     }
 
+    // Verificar novamente se o horário está disponível antes de abrir o diálogo
+    if (!isTimeSlotAvailable(selectedDate, time)) {
+      toast({
+        title: "Horário indisponível",
+        description: "Este horário já passou ou está ocupado.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setConfirmationDialog({
       open: true,
       date: selectedDate,
@@ -135,6 +161,17 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
 
   const confirmAppointment = () => {
     if (!confirmationDialog.date || !confirmationDialog.time || !user.email) return;
+
+    // Verificar mais uma vez se o horário ainda está disponível
+    if (!isTimeSlotAvailable(confirmationDialog.date, confirmationDialog.time)) {
+      toast({
+        title: "Erro no agendamento",
+        description: "Este horário não está mais disponível.",
+        variant: "destructive"
+      });
+      setConfirmationDialog({ open: false });
+      return;
+    }
 
     const dateStr = format(confirmationDialog.date, 'yyyy-MM-dd');
     const newAppointment: Appointment = {
@@ -442,7 +479,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                     </div>
                     <div className="h-80">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3676.8765!2d-43.3376!3d-22.8127!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997e0da2b1234567%3A0x9876543210abcdef!2sPadre%20Roser%2C%201153%20-%20Iraj%C3%A1%2C%20Rio%20de%20Janeiro%20-%20RJ%2C%2021235-140!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.4567!2d-43.3376!3d-22.8127!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997e0da2b1234567%3A0x9876543210abcdef!2sPadre%20Roser%2C%201153%20-%20Iraj%C3%A1%2C%20Rio%20de%20Janeiro%20-%20RJ%2C%2021235-140!5e0!3m2!1spt-BR!2sbr!4v1640995200000!5m2!1spt-BR!2sbr"
                         width="100%"
                         height="100%"
                         style={{ border: 0 }}
