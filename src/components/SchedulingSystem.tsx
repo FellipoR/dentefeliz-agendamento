@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar } from '@/components/ui/calendar';
 import { format, addDays, isSameDay, isAfter, isBefore } from 'date-fns';
@@ -25,6 +26,8 @@ interface Appointment {
   date: string;
   time: string;
   status: 'scheduled' | 'cancelled';
+  cancellationMessage?: string;
+  cancelledBy?: 'client' | 'admin';
 }
 
 interface SchedulingSystemProps {
@@ -49,6 +52,11 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
     time?: string;
   }>({ open: false });
   const [limitDialog, setLimitDialog] = useState(false);
+  const [adminCancelDialog, setAdminCancelDialog] = useState<{
+    open: boolean;
+    appointment?: Appointment;
+    message: string;
+  }>({ open: false, message: '' });
   const { toast } = useToast();
 
   const timeSlots = [
@@ -199,7 +207,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
 
   const cancelAppointment = (appointmentId: string) => {
     const updatedAppointments = appointments.map(apt =>
-      apt.id === appointmentId ? { ...apt, status: 'cancelled' as const } : apt
+      apt.id === appointmentId ? { ...apt, status: 'cancelled' as const, cancelledBy: 'client' as const } : apt
     );
     
     setAppointments(updatedAppointments);
@@ -211,6 +219,41 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
       title: "Consulta cancelada",
       description: "Sua consulta foi cancelada com sucesso"
     });
+  };
+
+  const handleAdminCancelClick = (appointment: Appointment) => {
+    setAdminCancelDialog({
+      open: true,
+      appointment,
+      message: ''
+    });
+  };
+
+  const confirmAdminCancel = () => {
+    if (!adminCancelDialog.appointment) return;
+
+    const updatedAppointments = appointments.map(apt =>
+      apt.id === adminCancelDialog.appointment!.id 
+        ? { 
+            ...apt, 
+            status: 'cancelled' as const, 
+            cancelledBy: 'admin' as const,
+            cancellationMessage: adminCancelDialog.message
+          } 
+        : apt
+    );
+    
+    setAppointments(updatedAppointments);
+    localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+    
+    loadAppointments();
+    
+    toast({
+      title: "Consulta cancelada pelo administrador",
+      description: `Consulta de ${adminCancelDialog.appointment.clientName} foi cancelada`
+    });
+
+    setAdminCancelDialog({ open: false, message: '' });
   };
 
   return (
@@ -339,6 +382,13 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                             {format(new Date(apt.date), 'dd/MM/yyyy', { locale: ptBR })} às {apt.time}h
                           </p>
                         </div>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleAdminCancelClick(apt)}
+                        >
+                          Cancelar
+                        </Button>
                       </div>
                     ))}
                 </div>
@@ -520,6 +570,38 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
             </Button>
             <Button onClick={confirmAppointment}>
               Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Admin Cancel Dialog */}
+      <Dialog open={adminCancelDialog.open} onOpenChange={(open) => setAdminCancelDialog({ ...adminCancelDialog, open })}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cancelar Consulta</DialogTitle>
+            <DialogDescription>
+              Você está cancelando a consulta de {adminCancelDialog.appointment?.clientName}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="cancellation-message">Mensagem para o cliente (opcional):</Label>
+              <Textarea
+                id="cancellation-message"
+                placeholder="Digite uma mensagem explicando o motivo do cancelamento..."
+                value={adminCancelDialog.message}
+                onChange={(e) => setAdminCancelDialog({ ...adminCancelDialog, message: e.target.value })}
+                className="min-h-20"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setAdminCancelDialog({ open: false, message: '' })}>
+              Voltar
+            </Button>
+            <Button variant="destructive" onClick={confirmAdminCancel}>
+              Cancelar Consulta
             </Button>
           </DialogFooter>
         </DialogContent>
