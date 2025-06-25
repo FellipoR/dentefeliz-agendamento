@@ -182,7 +182,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-primary">🦷 OdontoAgenda</h1>
+            <h1 className="text-2xl font-bold text-primary">🦷 Dente Feliz</h1>
             <span className="text-muted-foreground">
               {user.type === 'admin' ? 'Painel Administrativo' : `Olá, ${user.name}`}
             </span>
@@ -410,7 +410,7 @@ const SchedulingSystem: React.FC<SchedulingSystemProps> = ({
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
-                        <h4 className="font-medium text-base mb-2">Clínica OdontoAgenda</h4>
+                        <h4 className="font-medium text-base mb-2">Clínica Dente Feliz</h4>
                         <p className="text-muted-foreground">
                           Padre Roser, 1153<br/>
                           Sobrado Irajá - Rio de Janeiro/RJ<br/>
